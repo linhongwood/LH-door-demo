@@ -14,6 +14,22 @@
 
 
 <style>
+  .outer-frame {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 4;
+}
+
+.inner-frame {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 3;
+}
+
   body {
     background: #121416;
     color: white;
@@ -228,6 +244,110 @@ function setPanel(name){
 
   img.src = pngPath;
 }
+
+  body {
+    background: #121416;
+    color: white;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 30px;
+}
+
+h1 {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+/* ====== 左側預覽 ====== */
+.preview-area {
+    position: relative;
+    width: 380px;
+    height: 820px;
+    background: black;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+/* 背景圖層 */
+.background-layer {
+    z-index: 1;
+}
+
+/* 門扇 */
+.panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56%;  /* 初始寬度 */
+    background-size: cover;
+    background-position: center;
+    z-index: 2;
+}
+
+/* 內框 */
+.inner-frame {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 3;
+}
+
+/* 外框 */
+.outer-frame {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 4;
+}
+
+/* ====== 右側 UI ====== */
+.side-menu {
+    margin-left: 40px;
+    width: 400px;
+}
+
+.section-title {
+    font-size: 20px;
+    margin: 10px 0 6px;
+    font-weight: bold;
+}
+
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.chip {
+    padding: 6px 14px;
+    background: #2b2f33;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.chip:hover { background: #444; }
+
+.chip.active {
+    background: #ffd86c;
+    color: #000;
+    font-weight: bold;
+}
+
+.hidden-section { display: none; }
+
 
 /* ===== 生成選單 ===== */
 createChips(backgrounds, bgList, setBackground);
