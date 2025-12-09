@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>門框 × 門扇 × 顏色 Demo</title>
+<title>門框 × 門扇 Demo</title>
 
 <style>
   body {
@@ -14,25 +14,16 @@
     padding: 30px;
   }
 
-  h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 18px;
-  }
+  h1 { font-size: 28px; margin-bottom: 18px; }
 
-  /* ===== 左側預覽區 ===== */
   .preview-area {
     position: relative;
     width: 380px;
     height: 820px;
-    margin-top: 20px;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
   }
-
-  /* 三層結構：門扇、內框、外框 */
 
   .layer {
     position: absolute;
@@ -42,185 +33,169 @@
     background-repeat: no-repeat;
   }
 
-  /* === 門扇遮罩 === */
-  .panel-mask {
-    mask-image: url("./masks/panel_mask.png");
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
+  /* ====== 遮罩設定 ====== */
 
-    -webkit-mask-image: url("./masks/panel_mask.png");
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-  }
-
-  /* === 內框 === */
-  .frame-mask {
-    mask-image: url("./masks/frame_mask.png");
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
-
-    -webkit-mask-image: url("./masks/frame_mask.png");
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-  }
-
-  /* === 外框 === */
-  .frame-mask2 {
+  /* 外框（大框） */
+  .frame2 {
     mask-image: url("./masks/frame_mask2.png");
+    -webkit-mask-image: url("./masks/frame_mask2.png");
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-
-    -webkit-mask-image: url("./masks/frame_mask2.png");
     -webkit-mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
   }
 
-  /* ===== 右側選單 ===== */
-  .side-menu {
-    position: absolute;
-    right: 40px;
-    top: 40px;
-    width: 420px;
+  /* 內框（小框） */
+  .frame1 {
+    mask-image: url("./masks/frame_mask.png");
+    -webkit-mask-image: url("./masks/frame_mask.png");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
   }
 
-  .section-title {
-    font-size: 20px;
-    margin: 12px 0 6px;
-    font-weight: 700;
+  /* 門扇（木紋） */
+  .panel {
+    mask-image: url("./masks/panel_mask.png");
+    -webkit-mask-image: url("./masks/panel_mask.png");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
   }
+
+  /* 右側選單 */
+  .side-menu {
+    width: 380px;
+    padding-left: 40px;
+  }
+
+  .section-title { font-size: 20px; margin: 16px 0 6px; }
 
   .chip-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 18px;
   }
 
   .chip {
     padding: 6px 14px;
+    background: #222;
     border-radius: 20px;
-    background: #22262b;
     cursor: pointer;
-    font-size: 14px;
-    border: 1px solid transparent;
     transition: 0.15s;
   }
 
-  .chip:hover {
-    border-color: #f5d37a;
-  }
+  .chip:hover { background: #444; }
+  .chip.active { background: #f5d37a; color: #000; font-weight: bold; }
 
-  .chip.active {
-    background: #f5d37a;
-    color: #000;
-    font-weight: bold;
-  }
 </style>
 </head>
 
 <body>
 
-<h1>門框 × 門扇 × 顏色 Demo</h1>
+<h1>門框 × 門扇 Demo (三層遮罩)</h1>
 
 <div style="display:flex; gap:40px;">
-  
-  <!-- 左側：預覽 -->
+
+  <!-- 左側預覽 -->
   <div class="preview-area">
-      <div id="panelLayer" class="layer panel-mask"></div>
-      <div id="frameLayer" class="layer frame-mask"></div>
-      <div id="frame2Layer" class="layer frame-mask2"></div>
+    <div id="panelLayer" class="layer panel"></div>
+    <div id="frameLayer" class="layer frame1"></div>
+    <div id="frame2Layer" class="layer frame2"></div>
   </div>
 
-  <!-- 右側：選單 -->
+  <!-- 右側選單 -->
   <div class="side-menu">
 
-      <!-- 門框選擇 -->
-      <div class="section-title">門框（frame_patterns）</div>
-      <div id="frameList" class="chip-list"></div>
+    <div class="section-title">外框（frame_patterns）</div>
+    <div id="frameList2" class="chip-list"></div>
 
-      <!-- 門扇選擇 -->
-      <div class="section-title">門扇（panel_patterns）</div>
-      <div id="panelList" class="chip-list"></div>
+    <div class="section-title">內框（frame_patterns2）</div>
+    <div id="frameList1" class="chip-list"></div>
+
+    <div class="section-title">門扇（panel_patterns）</div>
+    <div id="panelList" class="chip-list"></div>
 
   </div>
 
 </div>
 
 <script>
-/* ======== 你的所有顏色清單 ======== */
-const framePatterns = [
-  "LU6001PP","LU6002PP","LU6003PP","LU6004","LU6005","LU6006",
-  "LU6007","LU6008","LU6009","LU6010","LU6011","LU6012",
-  "LU6013","LU6014","LH6015","LH6016"
+/* ===== 依你的新資料夾結構 ===== */
+
+/* 外框：frame_patterns */
+const outerFrames = [
+  "LU6001PP.png","LU6002PP.png","LU6003PP.png","LU6004.png",
+  "LU6005.png","LU6006.png","LU6007.png","LU6008.png"
 ];
 
-const panelPatterns = [
-  "LU6001PP","LU6002PP","LU6003PP","LU6004","LU6005","LU6006",
-  "LU6007","LU6008","LU6009","LU6010","LU6011","LU6012",
-  "LU6013","LU6014","LH6015","LH6016",
-  "FORMICA_0905CY","FORMICA_0921CY","FORMICA_3200CY",
-  "FORMICA_9266CY","FORMICA_0860NT","FORMICA_0862NT",
-  "FORMICA_0870NG","FORMICA_0871OG","FORMICA_0878OG",
-  "FORMICA_0937OG","FORMICA_0939OG","FORMICA_0956D8",
-  "FORMICA_1079NT","FORMICA_5968OG","FORMICA_5970OG",
-  "FORMICA_6405NT","FORMICA_6407NT","FORMICA_8808OG",
-  "FORMICA_8841DB","FORMICA_8843NT","FORMICA_8844NT",
-  "FORMICA_8848NT","FORMICA_8849NT","FORMICA_8854NT",
-  "FORMICA_8906NT","FORMICA_9222NT","FORMICA_9281NG",
-  "FORMICA_9436D8","FORMICA_5875LM","FORMICA_0964PT",
-  "FORMICA_1002PT","FORMICA_0995PT"
+/* 內框：frame_patterns2 */
+const innerFrames = [
+  "LU6001PP.png","LU6002PP.png","LU6003PP.png","LU6004.png"
 ];
 
-/* ======= DOM ======= */
-const frameList = document.getElementById("frameList");
+/* 門扇：panel_patterns */
+const panels = [
+  "LH6015.jpg","LU6001PP.jpg","LU6002PP.jpg"
+];
+
+/* DOM */
+const frameList2 = document.getElementById("frameList2");
+const frameList1 = document.getElementById("frameList1");
 const panelList = document.getElementById("panelList");
 
+const panelLayer = document.getElementById("panelLayer");
 const frameLayer = document.getElementById("frameLayer");
 const frame2Layer = document.getElementById("frame2Layer");
-const panelLayer = document.getElementById("panelLayer");
 
-/* ======= 產生 chip 按鈕 ======= */
+/* chip 建立器 */
 function createChips(list, container, callback) {
-  list.forEach(name => {
+  list.forEach(file => {
     const chip = document.createElement("div");
     chip.className = "chip";
-    chip.innerText = name;
-
+    chip.innerText = file.replace(".png","").replace(".jpg","");
     chip.onclick = () => {
       container.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
-      callback(name);
+      callback(file);
     };
-
     container.appendChild(chip);
   });
 }
 
-/* ======= 套用背景 ======= */
-function setFrame(name) {
-  frameLayer.style.backgroundImage = `url("./frame_patterns/${name}.jpg")`;
-  frame2Layer.style.backgroundImage = `url("./frame_patterns/${name}.jpg")`;
+/* 套圖片路徑 */
+function setOuterFrame(file){
+  frame2Layer.style.backgroundImage = `url('./frame_patterns/${file}')`;
 }
 
-function setPanel(name) {
-  panelLayer.style.backgroundImage = `url("./panel_patterns/${name}.jpg")`;
+function setInnerFrame(file){
+  frameLayer.style.backgroundImage = `url('./frame_patterns2/${file}')`;
 }
 
-/* ======= 初始化 ======= */
-createChips(framePatterns, frameList, setFrame);
-createChips(panelPatterns, panelList, setPanel);
+function setPanel(file){
+  panelLayer.style.backgroundImage = `url('./panel_patterns/${file}')`;
+}
 
-/* 預設選第一個 */
-setFrame(framePatterns[0]);
-setPanel(panelPatterns[0]);
+/* 初始化 */
+createChips(outerFrames, frameList2, setOuterFrame);
+createChips(innerFrames, frameList1, setInnerFrame);
+createChips(panels, panelList, setPanel);
 
-frameList.children[0].classList.add("active");
+/* 預設值 */
+setOuterFrame(outerFrames[0]);
+setInnerFrame(innerFrames[0]);
+setPanel(panels[0]);
+
+frameList2.children[0].classList.add("active");
+frameList1.children[0].classList.add("active");
 panelList.children[0].classList.add("active");
 
 </script>
