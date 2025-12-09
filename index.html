@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>綠品 LUPIN 系統門 Demo｜門框 × 門扇 × 門鎖 × 背景</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+        "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #101214;
+      color: #f5f5f5;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 215, 128, 0.4);
+      font-size: 11px;
+      color: #ffd780;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      margin-bottom: 18px;
+      color: #b0b3b8;
+      font-size: 13px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    /* 預覽區卡片 */
+    .preview-card {
+      background: radial-gradient(circle at top, #1f232a 0, #101214 60%);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .preview-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .preview-tag {
+      font-size: 11px;
+      color: #ffd780;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 215, 128, 0.6);
+      padding: 2px 8px;
+    }
+
+    .preview-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 62%; /* 比 16:9 再高一點，門看起來比較修長 */
+      border-radius: 14px;
+      overflow: hidden;
+      background: #2b3036;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+    }
+
+    .layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    /* 背景圖層 */
+    .layer-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.05) brightness(0.92);
+      transform: scale(1.02);
+    }
+
+    /* 門扇層：用 mask + 背景圖實現材質貼圖 */
+    .layer-door {
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .door-layer {
+      width: 32%;
+      height: 84%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      /* 門扇遮罩 */
+      -webkit-mask-image: url("masks/panel_mask.png");
+      mask-image: url("masks/panel_mask.png");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      background-color: #d0d0d0;
+      filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.7));
+    }
+
+    /* 門框 & 門框2 */
+    .frame-layer,
+    .frame2-layer {
+      width: 40%;
+      height: 90%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    .layer-frame,
+    .layer-frame2 {
+      justify-content: center;
+      align-items: center;
+    }
+
+    .frame-layer {
+      -webkit-mask-image: url("masks/frame_mask2.png");
+      mask-image: url("masks/frame_mask2.png");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      background-color: #c8c8c8;
+    }
+
+    .frame2-layer {
+      -webkit-mask-image: url("masks/frame_mask.png");
+      mask-image: url("masks/frame_mask.png");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      background-color: #c8c8c8;
+      filter: brightness(0.8); /* 門框2：自動加深 20% */
+    }
+
+    .layer-frame2.hidden {
+      display: none;
+    }
+
+    /* 門鎖 */
+    .layer-lock {
+      justify-content: center;
+      align-items: center;
+      padding-left: 5%;
+    }
+
+    .layer-lock img {
+      max-height: 26%;
+      object-fit: contain;
+      transform: translateX(55%);
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.7));
+    }
+
+    /* 控制區 */
+    .control-card {
+      background: linear-gradient(145deg, #181b20, #101214);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .control-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .control-section-title span.sub {
+      font-size: 11px;
+      color: #8f939a;
+      font-weight: 400;
+    }
+
+    .control-group {
+      margin-bottom: 14px;
+    }
+
+    .control-label {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #d0d3da;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .control-label span.hint {
+      font-size: 10px;
+      color: #7f8288;
+    }
+
+    select {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #2c3138;
+      font-size: 12px;
+      background: #14171b;
+      color: #f5f5f5;
+      outline: none;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid #343842;
+      cursor: pointer;
+      background: #14171b;
+      color: #c6cad3;
+      user-select: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .chip:hover {
+      border-color: #ffd780;
+      color: #ffd780;
+    }
+
+    .chip.active {
+      border-color: #ffd780;
+      background: #ffd780;
+      color: #121212;
+      box-shadow: 0 0 0 1px rgba(255, 215, 128, 0.2);
+    }
+
+    /* 門框2 toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0 4px;
+      font-size: 11px;
+      color: #c6cad3;
+    }
+
+    .toggle-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-label span.sub {
+      font-size: 10px;
+      color: #8f939a;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 34px;
+      height: 18px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #2c3138;
+      transition: 0.2s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #c6cad3;
+      transition: 0.2s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .slider {
+      background-color: #ffd780;
+    }
+
+    .toggle-switch input:checked + .slider:before {
+      transform: translateX(16px);
+      background-color: #121212;
+    }
+
+    /* 摘要卡片 */
+    .summary-card {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, #252932 0, #15181d 55%);
+      font-size: 11px;
+      line-height: 1.7;
+      color: #c6cad3;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .summary-label {
+      color: #8f939a;
+    }
+
+    .summary-value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 14px;
+      }
+      .page {
+        grid-template-columns: 1fr;
+      }
+      .preview-card {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand-badge">
+    綠品 LUPIN 系統門
+    <span>|</span>
+    LH 門框 × 門扇搭配模擬
+  </div>
+  <h1>門框 × 門扇 × 門鎖 × 背景 Demo</h1>
+  <div class="subtitle">
+    選擇 LH 門框色、門扇材質、門鎖與空間背景，快速預覽實際搭配效果。
+  </div>
+
+  <div class="page">
+    <!-- 左側：預覽區 -->
+    <div class="preview-card">
+      <div class="preview-header">
+        <div class="preview-title">即時預覽</div>
+        <div class="preview-tag">LIVE PREVIEW</div>
+      </div>
+      <div class="preview-wrapper">
+        <!-- 背景 -->
+        <div class="layer layer-bg">
+          <!-- TODO：這裡預設讀 backgrounds/bg01.jpg，你可以改成實際檔名 -->
+          <img id="bgImg" src="backgrounds/bg01.jpg" alt="背景" />
+        </div>
+
+        <!-- 門扇（panel + panel_mask） -->
+        <div class="layer layer-door">
+          <div id="doorLayer" class="door-layer"></div>
+        </div>
+
+        <!-- 門框（frame_mask2） -->
+        <div class="layer layer-frame">
+          <div id="frameLayer" class="frame-layer"></div>
+        </div>
+
+        <!-- 門框2（frame_mask，加深 20%） -->
+        <div class="layer layer-frame2" id="frame2LayerWrapper">
+          <div id="frame2Layer" class="frame2-layer"></div>
+        </div>
+
+        <!-- 門鎖 -->
+        <div class="layer layer-lock">
+          <!-- 預設用 LU001 -->
+          <img id="lockImg" src="locks/LU001.png" alt="門鎖" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 右側：控制區 -->
+    <div class="control-card">
+      <div class="control-section-title">
+        <span>配置選擇</span>
+        <span class="sub">LH 正式色號 Demo</span>
+      </div>
+
+      <!-- 門框 -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>門框顏色（frame_patterns）</span>
+          <span class="hint">LU600x / LH601x 系列</span>
+        </div>
+        <select id="frameSelect"></select>
+        <div class="chip-row" id="frameChips"></div>
+      </div>
+
+      <!-- 門框2 開關 -->
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>啟用門框 2（加深 20%）</span>
+          <span class="sub">模擬雙框或視覺壓邊效果</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="frame2Toggle" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- 門扇 -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>門扇材質（panel_patterns）</span>
+          <span class="hint">含 LU 系列 + FORMICA 系列</span>
+        </div>
+        <select id="doorSelect"></select>
+        <div class="chip-row" id="doorChips"></div>
+      </div>
+
+      <!-- 門鎖 -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>門鎖樣式（locks）</span>
+          <span class="hint">LU001～LU004 示意</span>
+        </div>
+        <select id="lockSelect"></select>
+        <div class="chip-row" id="lockChips"></div>
+      </div>
+
+      <!-- 背景 -->
+      <div class="control-group">
+        <div class="control-label">
+          <span>背景空間（backgrounds）</span>
+          <span class="hint">可替換為展示間 / 客廳等</span>
+        </div>
+        <select id="bgSelect"></select>
+        <div class="chip-row" id="bgChips"></div>
+      </div>
+
+      <!-- 簡易摘要 -->
+      <div class="summary-card">
+        <div class="summary-row">
+          <span class="summary-label">門框</span>
+          <span class="summary-value" id="summaryFrame">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">門框 2</span>
+          <span class="summary-value" id="summaryFrame2">啟用（加深 20%）</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">門扇</span>
+          <span class="summary-value" id="summaryDoor">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">門鎖</span>
+          <span class="summary-value" id="summaryLock">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">背景</span>
+          <span class="summary-value" id="summaryBg">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== 這裡設定「可以選的物件」 ======
+    // 門框顏色：全部來自 frame_patterns 資料夾（假設副檔名 .png）
+    const frameVariants = [
+      "LU6001PP",
+      "LU6002PP",
+      "LU6003PP",
+      "LU6004",
+      "LU6005",
+      "LU6006",
+      "LU6007",
+      "LU6008",
+      "LU6009",
+      "LU6010",
+      "LU6011",
+      "LU6012",
+      "LU6013",
+      "LU6014",
+      "LH6015",
+      "LH6016"
+    ];
+
+    // 門扇材質：panel_patterns（含 LU & FORMICA 系列）
+    const doorVariants = [
+      "LU6001PP",
+      "LU6002PP",
+      "LU6003PP",
+      "LU6004",
+      "LU6005",
+      "LU6006",
+      "LU6007",
+      "LU6008",
+      "LU6009",
+      "LU6010",
+      "LU6011",
+      "LU6012",
+      "LU6013",
+      "LU6014",
+      "LH6015",
+      "LH6016",
+      "FORMICA_0905CY",
+      "FORMICA_0921CY",
+      "FORMICA_3200CY",
+      "FORMICA_9266CY",
+      "FORMICA_0860NT",
+      "FORMICA_0862NT",
+      "FORMICA_0870NT",
+      "FORMICA_0871OG",
+      "FORMICA_0878OG",
+      "FORMICA_0937OG",
+      "FORMICA_0939OG",
+      "FORMICA_0956D8",
+      "FORMICA_1079NT",
+      "FORMICA_5968OG",
+      "FORMICA_5970OG",
+      "FORMICA_6405NT",
+      "FORMICA_6407NT",
+      "FORMICA_8808OG",
+      "FORMICA_8841D8",
+      "FORMICA_8843NT",
+      "FORMICA_8844NT",
+      "FORMICA_8848NT",
+      "FORMICA_8849NT",
+      "FORMICA_8854NT",
+      "FORMICA_8906NT",
+      "FORMICA_9222NT",
+      "FORMICA_9281NG",
+      "FORMICA_9436D8",
+      "FORMICA_5875LM",
+      "FORMICA_0964PT",
+      "FORMICA_1002PT",
+      "FORMICA_0995PT"
+    ];
+
+    // 門鎖（假設 locks/LU001.png ... LU004.png）
+    const lockVariants = ["LU001", "LU002", "LU003", "LU004"];
+
+    // 背景（請依你的背景檔名調整）
+    // 例如你有：backgrounds/bg01.jpg, bg02.jpg, bg03.jpg
+    const bgVariants = [
+      { label: "展示間背景 1", file: "bg01.jpg" },
+      { label: "展示間背景 2", file: "bg02.jpg" },
+      { label: "客廳背景", file: "bg03.jpg" }
+    ];
+
+    const dom = {
+      frameSelect: document.getElementById("frameSelect"),
+      doorSelect: document.getElementById("doorSelect"),
+      lockSelect: document.getElementById("lockSelect"),
+      bgSelect: document.getElementById("bgSelect"),
+
+      frameChips: document.getElementById("frameChips"),
+      doorChips: document.getElementById("doorChips"),
+      lockChips: document.getElementById("lockChips"),
+      bgChips: document.getElementById("bgChips"),
+
+      doorLayer: document.getElementById("doorLayer"),
+      frameLayer: document.getElementById("frameLayer"),
+      frame2Layer: document.getElementById("frame2Layer"),
+      frame2LayerWrapper: document.getElementById("frame2LayerWrapper"),
+      lockImg: document.getElementById("lockImg"),
+      bgImg: document.getElementById("bgImg"),
+
+      frame2Toggle: document.getElementById("frame2Toggle"),
+
+      summaryFrame: document.getElementById("summaryFrame"),
+      summaryFrame2: document.getElementById("summaryFrame2"),
+      summaryDoor: document.getElementById("summaryDoor"),
+      summaryLock: document.getElementById("summaryLock"),
+      summaryBg: document.getElementById("summaryBg")
+    };
+
+    // 共用：建立 select + chips
+    function initChipsAndSelect(options, selectEl, chipContainer, onChange, labelGetter) {
+      selectEl.innerHTML = "";
+      chipContainer.innerHTML = "";
+
+      options.forEach((opt, index) => {
+        const label = labelGetter ? labelGetter(opt) : opt;
+        const value = opt;
+
+        // select option
+        const optionEl = document.createElement("option");
+        optionEl.value = value;
+        optionEl.textContent = label;
+        selectEl.appendChild(optionEl);
+
+        // chip
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.dataset.value = value;
+        chip.textContent = label;
+        chip.addEventListener("click", () => {
+          selectEl.value = value;
+          onChange(value);
+          updateActiveChip(chipContainer, value);
+        });
+        chipContainer.appendChild(chip);
+
+        // 預設第一個
+        if (index === 0) {
+          selectEl.value = value;
+          chip.classList.add("active");
+          onChange(value);
+        }
+      });
+
+      selectEl.addEventListener("change", (e) => {
+        const value = e.target.value;
+        onChange(value);
+        updateActiveChip(chipContainer, value);
+      });
+    }
+
+    function updateActiveChip(container, value) {
+      Array.from(container.children).forEach((chip) => {
+        chip.classList.toggle("active", chip.dataset.value === value);
+      });
+    }
+
+    // 設定各層圖片
+    function setFrameTexture(code) {
+      // frame_patterns 下的圖片（預設 .png，如不同請改）
+      const url = `frame_patterns/${code}.png`;
+      dom.frameLayer.style.backgroundImage = `url("${url}")`;
+      dom.frame2Layer.style.backgroundImage = `url("${url}")`;
+      dom.summaryFrame.textContent = code;
+    }
+
+    function setDoorTexture(code) {
+      // panel_patterns 下的圖片（預設 .png，如不同請改）
+      const url = `panel_patterns/${code}.png`;
+      dom.doorLayer.style.backgroundImage = `url("${url}")`;
+      dom.summaryDoor.textContent = code;
+    }
+
+    function setLock(code) {
+      const url = `locks/${code}.png`;
+      dom.lockImg.src = url;
+      dom.summaryLock.textContent = code;
+    }
+
+    function setBg(index) {
+      const item = bgVariants[index];
+      const url = `backgrounds/${item.file}`;
+      dom.bgImg.src = url;
+      dom.summaryBg.textContent = item.label;
+    }
+
+    // 門框2開關
+    function updateFrame2Toggle() {
+      const enabled = dom.frame2Toggle.checked;
+      dom.frame2LayerWrapper.classList.toggle("hidden", !enabled);
+      dom.summaryFrame2.textContent = enabled ? "啟用（加深 20%）" : "關閉";
+    }
+
+    // 初始化
+    initChipsAndSelect(frameVariants, dom.frameSelect, dom.frameChips, setFrameTexture);
+    initChipsAndSelect(doorVariants, dom.doorSelect, dom.doorChips, setDoorTexture);
+    initChipsAndSelect(lockVariants, dom.lockSelect, dom.lockChips, setLock);
+    initChipsAndSelect(
+      bgVariants.map((_, i) => i.toString()),
+      dom.bgSelect,
+      dom.bgChips,
+      (val) => setBg(parseInt(val, 10)),
+      (v) => bgVariants[parseInt(v, 10)].label
+    );
+
+    dom.frame2Toggle.addEventListener("change", updateFrame2Toggle);
+    updateFrame2Toggle(); // 初始化一次
+  </script>
+</body>
+</html>
