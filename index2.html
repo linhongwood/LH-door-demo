@@ -43,18 +43,15 @@
   /* 門扇（固定比例 4.52 : 11.11） */
   .panel {
     position: absolute;
+    top: 0;
+    bottom: 0;
     left: 50%;
-    top: 50%;
-    height: 100%;
-    width: calc(100% * 0.4068);
-    transform: translate(-50%, -50%);
-    z-index: 2;
+    transform: translateX(-50%);
+    width: 56%;
     background-size: cover;
     background-position: center;
-  }
-
-  .inner-frame { z-index: 3; background-size: cover; }
-  .outer-frame { z-index: 4; background-size: cover; }
+    z-index: 2;
+}
 
   /* ====== 右側 UI ====== */
   .side-menu {
