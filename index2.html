@@ -79,9 +79,7 @@
     font-size: 14px;
   }
 
-  .chip:hover {
-    background: #444;
-  }
+  .chip:hover { background: #444; }
 
   .chip.active {
     background: #ffd86c;
@@ -101,6 +99,13 @@
 
 <body>
 
+<div class="section-title">門扇寬度調整</div>
+<div class="panel-width-box">
+  <button onclick="changePanelWidth(-1)">－</button>
+  <div id="panelWidthLabel">56%</div>
+  <button onclick="changePanelWidth(1)">＋</button>
+</div>
+
 <h1>門框 × 門扇 Demo（正式版）</h1>
 
 <div style="display:flex; gap:40px;">
@@ -116,23 +121,11 @@
   <!-- 右側控制面板 -->
   <div class="side-menu">
 
-    <div class="section-title">門扇寬度調整</div>
-    <div class="panel-width-box">
-      <button onclick="changePanelWidth(-1)">－</button>
-      <div id="panelWidthLabel">56%</div>
-      <button onclick="changePanelWidth(1)">＋</button>
-    </div>
-
     <div class="section-title">背景</div>
     <div id="bgList" class="chip-list"></div>
 
     <div class="section-title">外框（frame_patterns）</div>
     <div id="outerFrameList" class="chip-list"></div>
-
-    <!-- 內框自動，不顯示給使用者 -->
-    <div style="display:none;">
-      <div id="innerFrameList"></div>
-    </div>
 
     <div class="section-title">門扇（panel_patterns）</div>
     <div id="panelList" class="chip-list"></div>
@@ -146,8 +139,8 @@
 let panelWidth = 56;
 function changePanelWidth(delta) {
   panelWidth = Math.max(20, Math.min(100, panelWidth + delta));
-  document.getElementById("panelLayer").style.width = panelWidth + "%";
-  document.getElementById("panelWidthLabel").innerText = panelWidth + "%";
+  panelLayer.style.width = panelWidth + "%";
+  panelWidthLabel.innerText = panelWidth + "%";
 }
 
 /* ====== 背景圖（放在根目錄） ====== */
@@ -177,7 +170,7 @@ const panels = [
   "LU6013","LU6014","LH6015","LH6016"
 ];
 
-/* ====== DOM 物件 ====== */
+/* ====== DOM ====== */
 const backgroundLayer = document.getElementById("backgroundLayer");
 const outerFrameLayer = document.getElementById("outerFrameLayer");
 const innerFrameLayer = document.getElementById("innerFrameLayer");
@@ -187,7 +180,7 @@ const bgList = document.getElementById("bgList");
 const outerFrameList = document.getElementById("outerFrameList");
 const panelList = document.getElementById("panelList");
 
-/* ====== chip 建立器 ====== */
+/* ====== 建立 chip ====== */
 function createChips(list, container, callback) {
   list.forEach(name => {
     const chip = document.createElement("div");
@@ -205,18 +198,18 @@ function createChips(list, container, callback) {
 }
 
 /* ====== 設定背景 ====== */
-function setBackground(file){
+function setBackground(file) {
   backgroundLayer.style.backgroundImage = `url('./${file}')`;
 }
 
-/* ====== 設定外框（+同步內框） ====== */
-function setOuterFrame(file){
+/* ====== 設定外框（同步內框） ====== */
+function setOuterFrame(file) {
   outerFrameLayer.style.backgroundImage = `url('./frame_patterns/${file}')`;
   innerFrameLayer.style.backgroundImage = `url('./frame_patterns2/${file}')`;
 }
 
-/* ====== 設定門扇（自動 JPG / PNG） ====== */
-function setPanel(name){
+/* ====== 設定門扇（支援 JPG + PNG） ====== */
+function setPanel(name) {
   const png = `./panel_patterns/${name}.png`;
   const jpg = `./panel_patterns/${name}.jpg`;
 
@@ -226,12 +219,12 @@ function setPanel(name){
   test.src = png;
 }
 
-/* ====== 生成 UI ====== */
+/* ====== 生成選單 ====== */
 createChips(backgrounds, bgList, setBackground);
 createChips(outerFrames, outerFrameList, setOuterFrame);
 createChips(panels, panelList, setPanel);
 
-/* ====== 預設載入 ====== */
+/* ====== 預設 ====== */
 setBackground(backgrounds[0]);
 setOuterFrame(outerFrames[0]);
 setPanel(panels[0]);
@@ -239,7 +232,6 @@ setPanel(panels[0]);
 bgList.children[0].classList.add("active");
 outerFrameList.children[0].classList.add("active");
 panelList.children[0].classList.add("active");
-
 </script>
 
 </body>
