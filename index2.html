@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>門框 × 門扇 Demo</title>
 
+  <div class="section-title">門扇寬度調整</div>
+<div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+    <button onclick="changePanelWidth(-1)" style="padding:4px 12px;">－</button>
+    <div id="panelWidthLabel">56%</div>
+    <button onclick="changePanelWidth(1)" style="padding:4px 12px;">＋</button>
+</div>
+
+
 <style>
   body {
     background: #121416;
@@ -41,17 +49,18 @@
   }
 
   /* 門扇（固定比例 4.52 : 11.11） */
-  .panel {
+ .panel {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 56%;
+    width: 56%;   /* 初始寬度 */
     background-size: cover;
     background-position: center;
     z-index: 2;
 }
+
 
   /* ====== 右側 UI ====== */
   .side-menu {
@@ -127,6 +136,15 @@
 </div>
 
 <script>
+
+  let panelWidth = 56; // 初始 56%
+
+function changePanelWidth(delta){
+  panelWidth = Math.min(100, Math.max(10, panelWidth + delta));
+  document.getElementById("panelLayer").style.width = panelWidth + "%";
+  document.getElementById("panelWidthLabel").innerText = panelWidth + "%";
+}
+
 
 /* ===== 背景（在根目錄） ===== */
 const backgrounds = ["1.jpg", "2.jpg", "3.jpg"];
