@@ -14,12 +14,9 @@
     padding: 30px;
   }
 
-  h1 {
-    font-size: 26px;
-    margin-bottom: 20px;
-  }
+  h1 { font-size: 26px; margin-bottom: 20px; }
 
-  /* ====== 左側預覽區 ====== */
+  /* ====== 預覽區 ====== */
   .preview-area {
     position: relative;
     width: 380px;
@@ -36,33 +33,32 @@
     background-position: center;
   }
 
-  /* ====== 門扇：固定比例 4.52 : 11.11 ====== */
+  /* 背景層 */
+  .background-layer { z-index: 1; }
 
+  /* 門扇比例固定：4.52 : 11.11 */
   .panel {
     position: absolute;
     left: 50%;
     top: 50%;
-
-    /* 高度佔容器的 100% */
     height: 100%;
-    width: calc(100% * 0.4068);   /* = 高度 x (4.52/11.11) */
-
+    width: calc(100% * 0.4068);
     transform: translate(-50%, -50%);
     background-size: cover;
     background-position: center;
+    z-index: 2;
   }
 
-  /* ====== 右側選單 ====== */
+  .inner-frame { z-index: 3; }
+  .outer-frame { z-index: 4; }
+
+  /* ===== UI ===== */
   .side-menu {
     margin-left: 40px;
     width: 400px;
   }
 
-  .section-title {
-    font-size: 20px;
-    margin: 10px 0 6px;
-    font-weight: bold;
-  }
+  .section-title { font-size: 20px; margin: 10px 0 6px; }
 
   .chip-list {
     display: flex;
@@ -79,41 +75,37 @@
     transition: .15s;
   }
 
-  .chip:hover {
-    background: #444;
-  }
+  .chip:hover { background: #444; }
+  .chip.active { background: #ffd86c; color: #000; font-weight: bold; }
 
-  .chip.active {
-    background: #ffd86c;
-    color: #000;
-    font-weight: bold;
-  }
+  .hidden-section { display: none; }
 </style>
 </head>
 
 <body>
 
-<h1>門框 × 門扇 Demo（不使用遮罩）</h1>
+<h1>門框 × 門扇 Demo（背景在根目錄）</h1>
 
 <div style="display:flex; gap:40px;">
 
-  <!-- 左側：預覽 -->
+  <!-- 左側 -->
   <div class="preview-area">
+      <div id="backgroundLayer" class="layer background-layer"></div>
       <div id="panelLayer" class="layer panel"></div>
-      <div id="innerFrameLayer" class="layer"></div>
-      <div id="outerFrameLayer" class="layer"></div>
+      <div id="innerFrameLayer" class="layer inner-frame"></div>
+      <div id="outerFrameLayer" class="layer outer-frame"></div>
   </div>
 
-  <!-- 右側：選單 -->
+  <!-- 右側選單 -->
   <div class="side-menu">
 
-    <div class="section-title">外框（frame_patterns）</div>
+    <div class="section-title">背景</div>
+    <div id="bgList" class="chip-list"></div>
+
+    <div class="section-title">外框</div>
     <div id="outerFrameList" class="chip-list"></div>
 
-    <div class="section-title">內框（frame_patterns2）</div>
-    <div id="innerFrameList" class="chip-list"></div>
-
-    <div class="section-title">門扇（panel_patterns）</div>
+    <div class="section-title">門扇</div>
     <div id="panelList" class="chip-list"></div>
 
   </div>
@@ -122,34 +114,34 @@
 
 <script>
 
-/* ===== 你的檔案清單 ===== */
+/* ===== 背景：在根目錄 ===== */
+const backgrounds = ["1.jpg", "2.jpg", "3.jpg"];
 
-/* 外框：frame_patterns */
+/* ===== 外框 ===== */
 const outerFrames = [
   "LU6001PP.png","LU6002PP.png","LU6003PP.png","LU6004.png",
   "LU6005.png","LU6006.png","LU6007.png","LU6008.png"
 ];
 
-/* 內框：frame_patterns2 */
-const innerFrames = [
-  "LU6001PP.png","LU6002PP.png","LU6003PP.png","LU6004.png"
-];
+/* ===== 內框：自動同步 ===== */
+const innerFrames = outerFrames;
 
-/* 門扇：panel_patterns */
+/* ===== 門扇 ===== */
 const panels = [
   "LH6015.jpg","LU6001PP.jpg","LU6002PP.jpg","LU6003PP.jpg"
 ];
 
 /* ===== DOM ===== */
+const backgroundLayer = document.getElementById("backgroundLayer");
 const outerFrameLayer = document.getElementById("outerFrameLayer");
 const innerFrameLayer = document.getElementById("innerFrameLayer");
 const panelLayer = document.getElementById("panelLayer");
 
+const bgList = document.getElementById("bgList");
 const outerFrameList = document.getElementById("outerFrameList");
-const innerFrameList = document.getElementById("innerFrameList");
 const panelList = document.getElementById("panelList");
 
-/* ===== 建立 chip 按鈕 ===== */
+/* ===== chip maker ===== */
 function createChips(list, container, callback) {
   list.forEach(file => {
     const chip = document.createElement("div");
@@ -166,31 +158,34 @@ function createChips(list, container, callback) {
   });
 }
 
-/* ===== 套用圖片 ===== */
-function setOuterFrame(file){
-  outerFrameLayer.style.backgroundImage = `url('./frame_patterns/${file}')`;
+/* ===== 套背景 ===== */
+function setBackground(file){
+  backgroundLayer.style.backgroundImage = `url('./${file}')`;
 }
 
-function setInnerFrame(file){
+/* ===== 套外框並同步內框 ===== */
+function setOuterFrame(file){
+  outerFrameLayer.style.backgroundImage = `url('./frame_patterns/${file}')`;
   innerFrameLayer.style.backgroundImage = `url('./frame_patterns2/${file}')`;
 }
 
+/* ===== 套門扇 ===== */
 function setPanel(file){
   panelLayer.style.backgroundImage = `url('./panel_patterns/${file}')`;
 }
 
 /* ===== 初始化 ===== */
+createChips(backgrounds, bgList, setBackground);
 createChips(outerFrames, outerFrameList, setOuterFrame);
-createChips(innerFrames, innerFrameList, setInnerFrame);
 createChips(panels, panelList, setPanel);
 
-/* 預設值 */
+/* ===== 預設 ===== */
+setBackground(backgrounds[0]);
 setOuterFrame(outerFrames[0]);
-setInnerFrame(innerFrames[0]);
 setPanel(panels[0]);
 
+bgList.children[0].classList.add("active");
 outerFrameList.children[0].classList.add("active");
-innerFrameList.children[0].classList.add("active");
 panelList.children[0].classList.add("active");
 
 </script>
