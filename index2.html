@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>門框 × 門扇 Demo</title>
+
+<style>
+  body {
+    background: #121416;
+    color: white;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 30px;
+  }
+
+  h1 {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+
+  /* ====== 左側預覽 ====== */
+  .preview-area {
+    position: relative;
+    width: 380px;
+    height: 820px;
+    background: black;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .background-layer {
+    z-index: 1;
+  }
+
+  /* 門扇（固定比例 4.52 : 11.11） */
+  .panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: calc(100% * 0.4068);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .inner-frame { z-index: 3; background-size: cover; }
+  .outer-frame { z-index: 4; background-size: cover; }
+
+  /* ====== 右側 UI ====== */
+  .side-menu {
+    margin-left: 40px;
+    width: 400px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    margin: 10px 0 6px;
+    font-weight: bold;
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .chip {
+    padding: 6px 14px;
+    background: #2b2f33;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .15s;
+  }
+
+  .chip:hover { background: #444; }
+
+  .chip.active {
+    background: #ffd86c;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .hidden-section { display: none; }
+</style>
+</head>
+
+<body>
+
+<h1>門框 × 門扇 Demo（正式版）</h1>
+
+<div style="display:flex; gap:40px;">
+
+  <!-- 左側 -->
+  <div class="preview-area">
+      <div id="backgroundLayer" class="layer background-layer"></div>
+      <div id="panelLayer" class="layer panel"></div>
+      <div id="innerFrameLayer" class="layer inner-frame"></div>
+      <div id="outerFrameLayer" class="layer outer-frame"></div>
+  </div>
+
+  <!-- 右側 -->
+  <div class="side-menu">
+
+    <div class="section-title">背景</div>
+    <div id="bgList" class="chip-list"></div>
+
+    <div class="section-title">外框</div>
+    <div id="outerFrameList" class="chip-list"></div>
+
+    <div class="hidden-section">
+      <div id="innerFrameList" class="chip-list"></div>
+    </div>
+
+    <div class="section-title">門扇</div>
+    <div id="panelList" class="chip-list"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* ===== 背景（在根目錄） ===== */
+const backgrounds = ["1.jpg", "2.jpg", "3.jpg"];
+
+/* ===== 外框 ===== */
+const outerFrames = [
+  "LU6001PP.png","LU6002PP.png","LU6003PP.png","LU6004.png",
+  "LU6005.png","LU6006.png","LU6007.png","LU6008.png"
+];
+
+/* ===== 內框（自動同步外框） ===== */
+const innerFrames = outerFrames;
+
+/* ===== 門扇（支援 PNG + JPG） ===== */
+const panels = [
+  "FORMICA_0905CY","FORMICA_0921CY","FORMICA_3200CY","FORMICA_9266CY",
+  "FORMICA_0860NT","FORMICA_0862NT","FORMICA_0870NT","FORMICA_0871OG",
+  "FORMICA_0878OG","FORMICA_0937OG","FORMICA_0939OG","FORMICA_0956D8",
+  "FORMICA_1079NT","FORMICA_5968OG","FORMICA_5970OG","FORMICA_6405NT",
+  "FORMICA_6407NT","FORMICA_8808OG","FORMICA_8841D8","FORMICA_8843NT",
+  "FORMICA_8844NT","FORMICA_8848NT","FORMICA_8849NT","FORMICA_8854NT",
+  "FORMICA_8906NT","FORMICA_9222NT","FORMICA_9281NG","FORMICA_9436D8",
+  "FORMICA_5875LM","FORMICA_0964PT","FORMICA_1002PT","FORMICA_0995PT",
+  "LU6001PP","LU6002PP","LU6003PP","LU6004","LU6005","LU6006",
+  "LU6007","LU6008","LU6009","LU6010","LU6011","LU6012",
+  "LU6013","LU6014","LH6015","LH6016"
+];
+
+/* ===== DOM ===== */
+const backgroundLayer = document.getElementById("backgroundLayer");
+const outerFrameLayer = document.getElementById("outerFrameLayer");
+const innerFrameLayer = document.getElementById("innerFrameLayer");
+const panelLayer = document.getElementById("panelLayer");
+
+const bgList = document.getElementById("bgList");
+const outerFrameList = document.getElementById("outerFrameList");
+const panelList = document.getElementById("panelList");
+
+/* ===== chip generator ===== */
+function createChips(list, container, callback) {
+  list.forEach(name => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerText = name;
+
+    chip.onclick = () => {
+      container.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      callback(name);
+    };
+
+    container.appendChild(chip);
+  });
+}
+
+/* ===== 背景 ===== */
+function setBackground(file){
+  backgroundLayer.style.backgroundImage = `url('./${file}')`;
+}
+
+/* ===== 外框 + 內框同步 ===== */
+function setOuterFrame(file){
+  outerFrameLayer.style.backgroundImage = `url('./frame_patterns/${file}')`;
+  innerFrameLayer.style.backgroundImage = `url('./frame_patterns2/${file}')`;
+}
+
+/* ===== 門扇（自動偵測 PNG 或 JPG） ===== */
+function setPanel(name){
+  const pngPath = `./panel_patterns/${name}.png`;
+  const jpgPath = `./panel_patterns/${name}.jpg`;
+
+  const img = new Image();
+
+  img.onload = () => {
+    panelLayer.style.backgroundImage = `url('${pngPath}')`;
+  };
+
+  img.onerror = () => {
+    panelLayer.style.backgroundImage = `url('${jpgPath}')`;
+  };
+
+  img.src = pngPath;
+}
+
+/* ===== 生成選單 ===== */
+createChips(backgrounds, bgList, setBackground);
+createChips(outerFrames, outerFrameList, setOuterFrame);
+createChips(panels, panelList, setPanel);
+
+/* ===== 預設 ===== */
+setBackground(backgrounds[0]);
+setOuterFrame(outerFrames[0]);
+setPanel(panels[0]);
+
+bgList.children[0].classList.add("active");
+outerFrameList.children[0].classList.add("active");
+panelList.children[0].classList.add("active");
+
+</script>
+
+</body>
+</html>
