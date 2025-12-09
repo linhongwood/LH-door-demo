@@ -2,241 +2,157 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>門框 × 門扇 Demo</title>
+<title>LH 門框 × 門扇 Demo</title>
 
 <style>
-  body {
-    background: #101215;
-    color: white;
-    font-family: "Noto Sans TC", sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+    body {
+        background: #111;
+        color: white;
+        font-family: "微軟正黑體";
+        margin: 0;
+        display: flex;
+        height: 100vh;
+    }
 
-  h1 {
-    margin: 20px 30px 5px;
-    font-size: 32px;
-  }
+    /* 左側預覽區 */
+    #preview {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #1a1a1a;
+    }
 
-  .container {
-    display: flex;
-    gap: 40px;
-    margin: 0 40px;
-  }
+    .door-wrapper {
+        position: relative;
+        width: 350px;   /* 小白建議比例（不變形、居中） */
+        height: 700px;
+    }
 
-  /* 左側預覽區 */
-  .preview-box {
-    flex: 1;
-    height: 85vh;
-    border-radius: 14px;
-    background: #181a1f;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    /* 共用：讓所有圖片不變形 */
+    .layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-  .door-wrapper {
-    position: relative;
-    width: 40%;
-    aspect-ratio: 1 / 2.1;
-  }
+    /* 三層遮罩設定 */
+    .frame2 {
+        mask-image: url("masks/frame_mask2.png");
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
 
-  /* 門扇：使用 panel_mask */
-  .layer-panel {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    -webkit-mask-image: url("masks/panel_mask.png");
-    mask-image: url("masks/panel_mask.png");
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-  }
+    .frame1 {
+        mask-image: url("masks/frame_mask.png");
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
 
-  /* 門框1：使用 frame_mask */
-  .layer-frame {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    -webkit-mask-image: url("masks/frame_mask.png");
-    mask-image: url("masks/frame_mask.png");
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-  }
+    .panel {
+        mask-image: url("masks/panel_mask.png");
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
 
-  /* 門框2：加深20% */
-  .layer-frame2 {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    filter: brightness(0.8);
-    -webkit-mask-image: url("masks/frame_mask2.png");
-    mask-image: url("masks/frame_mask2.png");
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-  }
+    /* 右側選單 */
+    #controls {
+        width: 360px;
+        padding: 20px;
+        background: #161616;
+        overflow-y: auto;
+    }
 
-  /* 右側控制區 */
-  .sidebar {
-    width: 420px;
-    background: #1b1e23;
-    padding: 25px;
-    border-radius: 14px;
-    height: 85vh;
-    overflow-y: auto;
-  }
+    .btn-group button {
+        margin: 5px;
+        padding: 8px 15px;
+        background: #333;
+        border: 1px solid #777;
+        color: white;
+        cursor: pointer;
+        border-radius: 6px;
+    }
 
-  .chip {
-    display: inline-block;
-    padding: 6px 14px;
-    background: #2a2d33;
-    border-radius: 14px;
-    margin: 4px 4px;
-    cursor: pointer;
-  }
-
-  .chip.active {
-    background: #ffd36b;
-    color: black;
-  }
+    .btn-group button:hover {
+        background: #555;
+    }
 </style>
-</head>
 
+</head>
 <body>
 
-<h1>門框 × 門扇 × 顏色 Demo</h1>
-
-<div class="container">
-
-  <!-- 預覽區 -->
-  <div class="preview-box">
+<!-- 左邊預覽 -->
+<div id="preview">
     <div class="door-wrapper">
-      <div class="layer-panel" id="panelLayer"></div>
-      <div class="layer-frame" id="frameLayer"></div>
-      <div class="layer-frame2" id="frameLayer2"></div>
-    </div>
-  </div>
 
-  <!-- 控制區 -->
-  <div class="sidebar">
+        <!-- 外框 -->
+        <img id="frame2" class="layer frame2" src="frame_patterns/LU6001PP.jpg">
+
+        <!-- 內框 -->
+        <img id="frame1" class="layer frame1" src="frame_patterns/LU6001PP.jpg">
+
+        <!-- 門扇 -->
+        <img id="panel" class="layer panel" src="panel_patterns/LH6015.jpg">
+
+    </div>
+</div>
+
+<!-- 右邊選單 -->
+<div id="controls">
     <h2>配置選擇</h2>
 
-    <h3>門框（frame_patterns）</h3>
-    <div id="frameChips"></div>
+    <div>
+        <h3>門框（frame_patterns）</h3>
+        <div class="btn-group" id="frameButtons"></div>
+    </div>
 
-    <br>
-    <h3>門扇（panel_patterns）</h3>
-    <div id="panelChips"></div>
-  </div>
-
+    <div style="margin-top:20px;">
+        <h3>門扇（panel_patterns）</h3>
+        <div class="btn-group" id="panelButtons"></div>
+    </div>
 </div>
 
 <script>
-/* -------------------------------
-    自動偵測 JPG / PNG
---------------------------------*/
-async function resolveImage(basePath, filename) {
-  const exts = ["png", "jpg", "jpeg"];
-  for (let ext of exts) {
-    const url = `${basePath}/${filename}.${ext}`;
-    try {
-      const res = await fetch(url, { method: "HEAD" });
-      if (res.ok) return url;
-    } catch (e) {}
-  }
-  console.warn("找不到圖片：", filename);
-  return "";
-}
-
-/* -------------------------------
-    顏色列表（不含副檔名）
---------------------------------*/
-const frameList = [
-  "LU6001PP","LU6002PP","LU6003PP","LU6004","LU6005","LU6006",
-  "LU6007","LU6008","LU6009","LU6010","LU6011","LU6012","LU6013",
-  "LU6014","LU6015","LU6016"
+/* 你的圖片列表 */
+const framePatterns = [
+    "LU6001PP.jpg","LU6002PP.jpg","LU6003PP.jpg","LU6004.png","LU6005.jpg",
+    "LU6006.jpg","LU6007.jpg","LU6008.jpg"
 ];
 
-const panelList = [
-  "LU6001PP","LU6002PP","LU6003PP","LU6004","LU6005","LU6006",
-  "LU6007","LU6008","LU6009","LU6010","LU6011","LU6012","LU6013",
-  "LU6014","LU6015","LU6016",
-  "FORMICA_0905CY","FORMICA_0921CY","FORMICA_3200CY","FORMICA_9266CY",
-  "FORMICA_0860NT","FORMICA_0862NT","FORMICA_0870NT","FORMICA_0871OG",
-  "FORMICA_0878OG","FORMICA_0937OG","FORMICA_0939OG","FORMICA_0956D8",
-  "FORMICA_1079NT","FORMICA_5968OG","FORMICA_5970OG","FORMICA_6405NT",
-  "FORMICA_6407NT","FORMICA_8808OG","FORMICA_8841D8","FORMICA_8843NT",
-  "FORMICA_8844NT","FORMICA_8848NT","FORMICA_8849NT","FORMICA_8854NT",
-  "FORMICA_8906NT","FORMICA_9222NT","FORMICA_9281NG","FORMICA_9436D8",
-  "FORMICA_5875LM","FORMICA_0964PT","FORMICA_1002PT","FORMICA_0995PT"
+const panelPatterns = [
+    "LH6015.jpg","FORMICA_0905CY.jpg","FORMICA_0921CY.jpg"
 ];
 
-/* -------------------------------
-    自動載入所有圖片
---------------------------------*/
-let framePatterns = {};
-let panelPatterns = {};
-
-async function loadImages() {
-  for (let name of frameList) {
-    framePatterns[name] = await resolveImage("frame_patterns", name);
-  }
-  for (let name of panelList) {
-    panelPatterns[name] = await resolveImage("panel_patterns", name);
-  }
-  initializeUI();
+/* 動態產生按鈕 */
+function createButtons(list, containerId, type) {
+    const container = document.getElementById(containerId);
+    list.forEach(file => {
+        const btn = document.createElement("button");
+        btn.innerText = file.replace(".jpg","").replace(".png","");
+        btn.onclick = () => updateImage(type, file);
+        container.appendChild(btn);
+    });
 }
 
-/* -------------------------------
-    初始化控制按鈕
---------------------------------*/
-function initializeUI() {
-  /* 門框按鈕 */
-  const frameBox = document.getElementById("frameChips");
-  frameList.forEach(name => {
-    const chip = document.createElement("div");
-    chip.className = "chip";
-    chip.innerText = name;
-    chip.onclick = () => {
-      document.querySelectorAll("#frameChips .chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      document.getElementById("frameLayer").style.backgroundImage = `url(${framePatterns[name]})`;
-      document.getElementById("frameLayer2").style.backgroundImage = `url(${framePatterns[name]})`;
-    };
-    frameBox.appendChild(chip);
-  });
-
-  /* 門扇按鈕 */
-  const panelBox = document.getElementById("panelChips");
-  panelList.forEach(name => {
-    const chip = document.createElement("div");
-    chip.className = "chip";
-    chip.innerText = name;
-    chip.onclick = () => {
-      document.querySelectorAll("#panelChips .chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      document.getElementById("panelLayer").style.backgroundImage = `url(${panelPatterns[name]})`;
-    };
-    panelBox.appendChild(chip);
-  });
+/* 更新圖片路徑 */
+function updateImage(type, file) {
+    if(type === "frame") {
+        document.getElementById("frame1").src = `frame_patterns/${file}`;
+        document.getElementById("frame2").src = `frame_patterns/${file}`;
+    } else {
+        document.getElementById("panel").src = `panel_patterns/${file}`;
+    }
 }
 
-loadImages();
+createButtons(framePatterns, "frameButtons", "frame");
+createButtons(panelPatterns, "panelButtons", "panel");
+
 </script>
 
 </body>
